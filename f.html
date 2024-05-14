@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yakala Oyunu</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  #container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background-color: #f0f0f0;
+    margin-bottom: 20px;
+  }
+  .circle {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #007bff;
+    cursor: pointer;
+  }
+  #score {
+    font-size: 24px;
+  }
+</style>
+</head>
+<body>
+
+<div id="container"></div>
+<div id="score">Score: <span id="scoreValue">0</span></div>
+<button onclick="restartGame()">Yeniden Başla</button>
+
+<script>
+  let container = document.getElementById('container');
+  let scoreValue = document.getElementById('scoreValue');
+  let score = 0;
+  let speed = 1000;
+  let circles = [];
+
+  function randomPosition(element) {
+    let containerWidth = container.offsetWidth;
+    let containerHeight = container.offsetHeight;
+    let elementWidth = element.offsetWidth;
+    let elementHeight = element.offsetHeight;
+    let maxX = containerWidth - elementWidth;
+    let maxY = containerHeight - elementHeight;
+    let randomX = Math.floor(Math.random() * maxX);
+    let randomY = Math.floor(Math.random() * maxY);
+    element.style.left = randomX + 'px';
+    element.style.top = randomY + 'px';
+  }
+
+  function increaseSpeed() {
+    speed *= 0.95;
+  }
+
+  function increaseScore() {
+    score++;
+    scoreValue.textContent = score;
+  }
+
+  function restartGame() {
+    score = 0;
+    scoreValue.textContent = score;
+    speed = 1000;
+    circles.forEach(circle => container.removeChild(circle));
+    circles = [];
+    startGame();
+  }
+
+  function startGame() {
+    let circle = document.createElement('div');
+    circle.className = 'circle';
+    container.appendChild(circle);
+    circles.push(circle);
+    randomPosition(circle);
+
+    circle.onclick = function() {
+      increaseScore();
+      increaseSpeed();
+      container.removeChild(circle);
+      circles = circles.filter(c => c !== circle);
+      startGame();
+    };
+
+    setTimeout(function() {
+      container.removeChild(circle);
+      circles = circles.filter(c => c !== circle);
+      startGame();
+    }, speed);
+  }
+
+  startGame();
+</script>
+
+</body>
+</html>
